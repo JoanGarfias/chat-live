@@ -1,14 +1,18 @@
 <script setup lang="ts">
+//vue utils
 import { computed, ref } from 'vue';
 
+//composables and types
 import { useChat } from '@/composables/useChat';
+import { Message } from '@/types/Message';
 
+//components and icons
 import ChatActions from '@/components/chat/ChatActions.vue';
 import ConfigPanel from '@/components/config/ConfigPanel.vue';
 import { CircleUserRound, Settings } from 'lucide-vue-next';
 import Button from '@/components/ui/button/Button.vue';
 
-const { getState, getName, addMessage } = useChat();
+const { getState, getName, addMessage, messages } = useChat();
 const isConfigOpen = ref<boolean>(false);
 
 const stateClass = computed(() => {
@@ -24,8 +28,8 @@ const stateClass = computed(() => {
     }
 });
 
-const sendMessage = () => {
-
+const receiveMessage = (msg: Message) => {
+    addMessage(msg);
 }
 
 
@@ -63,11 +67,15 @@ const sendMessage = () => {
             <!-- Chat Messages -->
             <div class="flex-1 p-4 overflow-y-auto space-y-4">
                 <!-- Aquí irán los mensajes del chat -->
-                <p class="text-muted-foreground">No hay mensajes aún. Sé el primero en enviar uno.</p>
+                <div v-for="(msg, index) in messages" :key="index" class="p-3 rounded-md" :class="msg.autor === getName() ? 'bg-blue-100 self-end' : 'bg-gray-100 self-start'">
+                    <p class="font-semibold text-sm mb-1">{{ msg.autor }}</p>
+                    <p class="text-md">{{ msg.mensaje }}</p>
+                </div>
+                <p v-if="messages.length === 0" class="text-muted-foreground">No hay mensajes aún. Sé el primero en enviar uno.</p>
             </div>
 
             <!-- Chat Actions -->
-            <ChatActions />
+            <ChatActions @sendMessage="receiveMessage" />
         </div>
     </div>
 </template>

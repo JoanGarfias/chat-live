@@ -25,6 +25,7 @@ export function useChat(){
     }
 
     return {
+        messages,
         getState,
         getName,
         addMessage,

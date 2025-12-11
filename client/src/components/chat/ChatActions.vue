@@ -18,13 +18,11 @@ const emit = defineEmits<{
 }>();
 
 const sendMessage = () => {
-    
-    emit('sendMessage', messageToSend.value);
+    const newMessage : Message = { ...messageToSend.value, autor: getName() };
+    emit('sendMessage', newMessage);
+    messageToSend.value.mensaje = '';
 };
 
-watch(MessageSquareMore, (m) => {
-    console.log(m);
-})
 </script>
 
 <template>
@@ -35,7 +33,7 @@ watch(MessageSquareMore, (m) => {
             rows="1"
             v-model="messageToSend.mensaje"
         />
-        <Button variant="outline" class="rounded-full h-12 w-12 flex items-center justify-center p-0">
+        <Button variant="outline" class="rounded-full h-12 w-12 flex items-center justify-center p-0" @click="sendMessage">
             <Send class="h-6 w-6" />
         </Button>
     </div>
