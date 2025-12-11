@@ -2,8 +2,8 @@
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Message } from '@/types/Message';
-import { MessageSquareMore, Send } from 'lucide-vue-next';
-import { ref, watch } from 'vue';
+import { Send } from 'lucide-vue-next';
+import { ref } from 'vue';
 import { useChat } from '@/composables/useChat';
 
 const { getName } = useChat();
