@@ -1,6 +1,6 @@
 <script setup lang="ts">
 //vue utils
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 //composables and types
 import { useChat } from '@/composables/useChat';
@@ -31,6 +31,10 @@ const stateClass = computed(() => {
 const receiveMessage = (msg: Message) => {
     addMessage(msg);
 }
+
+onMounted(() => {
+    console.log('Conectando con el socket...');
+});
 
 
 </script>
