@@ -1,12 +1,29 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+
+import { useChat } from '@/composables/useChat';
 
 import ChatActions from '@/components/chat/ChatActions.vue';
 import ConfigPanel from '@/components/config/ConfigPanel.vue';
 import { Settings } from 'lucide-vue-next';
 import Button from '@/components/ui/button/Button.vue';
 
+const { getState } = useChat();
 const isConfigOpen = ref<boolean>(false);
+
+const stateClass = computed(() => {
+    switch (getState()) {
+        case 'connected':
+            return 'bg-emerald-500';
+        case 'connecting':
+            return 'bg-yellow-500';
+        case 'disconnected':
+            return 'bg-red-500';
+        default:
+            return 'bg-gray-500';
+    }
+});
+
 
 </script>
 
@@ -20,7 +37,7 @@ const isConfigOpen = ref<boolean>(false);
             <div class="bg-accent/50 border-b border-border p-4 flex items-center justify-between">
                 <h2 class="text-xl font-semibold text-foreground">Chat Live</h2>
                 <div class="flex flex-row items-center gap-4">
-                    <span class="bg-emerald-500 rounded-full w-3 h-3"></span>
+                    <span :class="stateClass" class="rounded-full w-3 h-3"></span>
                     <!-- Settings -->
                     <div class="items-center">
                         <Button
