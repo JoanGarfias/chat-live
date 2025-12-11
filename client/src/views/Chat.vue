@@ -5,6 +5,9 @@ import { computed, onMounted, ref } from 'vue';
 //composables and types
 import { useChat } from '@/composables/useChat';
 import { Message } from '@/types/Message';
+import { useSocket } from "@/composables/useSocket";
+
+const { msgServer, send, connect } = useSocket();
 
 //components and icons
 import ChatActions from '@/components/chat/ChatActions.vue';
@@ -30,10 +33,12 @@ const stateClass = computed(() => {
 
 const receiveMessage = (msg: Message) => {
     addMessage(msg);
+    send(JSON.stringify(msg));
 }
 
-onMounted(() => {
+onMounted(async () => {
     console.log('Conectando con el socket...');
+    await connect();
 });
 
 

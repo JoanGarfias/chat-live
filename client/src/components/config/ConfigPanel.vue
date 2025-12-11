@@ -24,7 +24,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  'update:open': [value: boolean]
+  'update:open': [value: boolean],
+  'config-saved': []
 }>()
 
 const handleOpenChange = (value: boolean) => {
@@ -63,6 +64,7 @@ const handleSubmit = (event: Event) => {
     errors.value = null;
 
     configStore.setConfig(config.value)
+    emit('config-saved');
     setTimeout(() => {
         handleOpenChange(false);
         loading.value = false;
