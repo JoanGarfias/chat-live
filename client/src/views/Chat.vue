@@ -5,10 +5,10 @@ import { useChat } from '@/composables/useChat';
 
 import ChatActions from '@/components/chat/ChatActions.vue';
 import ConfigPanel from '@/components/config/ConfigPanel.vue';
-import { Settings } from 'lucide-vue-next';
+import { CircleUserRound, Settings } from 'lucide-vue-next';
 import Button from '@/components/ui/button/Button.vue';
 
-const { getState } = useChat();
+const { getState, getName } = useChat();
 const isConfigOpen = ref<boolean>(false);
 
 const stateClass = computed(() => {
@@ -35,7 +35,13 @@ const stateClass = computed(() => {
         <div class="flex-1 flex flex-col bg-card overflow-hidden">
             <!-- Chat Header -->
             <div class="bg-accent/50 border-b border-border p-4 flex items-center justify-between">
-                <h2 class="text-xl font-semibold text-foreground">Chat Live</h2>
+                <div class="flex flex-col gap-2">
+                    <!--<h2 class="text-xl font-semibold text-foreground">Chat Live</h2> -->
+                    <div class="flex flex-row gap-2 items-center">
+                        <CircleUserRound class="h-6 w-6 text-muted-foreground" />
+                        <p class="text-md text-muted-foreground">{{ getName() }}</p>
+                    </div>
+                </div>
                 <div class="flex flex-row items-center gap-4">
                     <span :class="stateClass" class="rounded-full w-3 h-3"></span>
                     <!-- Settings -->

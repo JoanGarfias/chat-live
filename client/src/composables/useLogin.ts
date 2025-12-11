@@ -1,8 +1,6 @@
 import { useAuthStore } from "@/stores/auth";
 import {
-    stringNotEmpty,
     stringMinLength,
-    stringMaxLength,
     stringEqualsLength,
     isValidUsernameLength
 } from "@/utils/utils";
