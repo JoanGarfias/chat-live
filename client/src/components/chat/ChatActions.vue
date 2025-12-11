@@ -1,9 +1,30 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Send } from 'lucide-vue-next';
+import { Message } from '@/types/Message';
+import { MessageSquareMore, Send } from 'lucide-vue-next';
+import { ref, watch } from 'vue';
+import { useChat } from '@/composables/useChat';
 
+const { getName } = useChat();
 
+const messageToSend = ref<Message>({
+    autor: '',
+    mensaje: ''
+});
+
+const emit = defineEmits<{
+    (e: 'sendMessage', msg: Message): void
+}>();
+
+const sendMessage = () => {
+    
+    emit('sendMessage', messageToSend.value);
+};
+
+watch(MessageSquareMore, (m) => {
+    console.log(m);
+})
 </script>
 
 <template>
@@ -12,6 +33,7 @@ import { Send } from 'lucide-vue-next';
             placeholder="Escribe tu mensaje..."
             class="flex-1 resize-none h-10 min-h-10 max-h-10 border border-input bg-background rounded-md px-3 overflow-hidden"
             rows="1"
+            v-model="messageToSend.mensaje"
         />
         <Button variant="outline" class="rounded-full h-12 w-12 flex items-center justify-center p-0">
             <Send class="h-6 w-6" />

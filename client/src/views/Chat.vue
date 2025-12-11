@@ -8,7 +8,7 @@ import ConfigPanel from '@/components/config/ConfigPanel.vue';
 import { CircleUserRound, Settings } from 'lucide-vue-next';
 import Button from '@/components/ui/button/Button.vue';
 
-const { getState, getName } = useChat();
+const { getState, getName, addMessage } = useChat();
 const isConfigOpen = ref<boolean>(false);
 
 const stateClass = computed(() => {
@@ -23,6 +23,10 @@ const stateClass = computed(() => {
             return 'bg-gray-500';
     }
 });
+
+const sendMessage = () => {
+
+}
 
 
 </script>
@@ -67,7 +71,3 @@ const stateClass = computed(() => {
         </div>
     </div>
 </template>
-
-<style scoped>
-
-</style>
