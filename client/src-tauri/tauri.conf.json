@@ -1,21 +1,22 @@
 {
-  "$schema": "https://schema.tauri.app/config/2",
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "chat-live",
   "version": "0.1.0",
-  "identifier": "com.joanp.chat-live",
+  "identifier": "com.tauri.dev",
   "build": {
+    "frontendDist": "../.output/public",
+    "devUrl": "http://localhost:3000",
     "beforeDevCommand": "npm run dev",
-    "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "npm run build",
-    "frontendDist": "../dist"
+    "beforeBuildCommand": "npm run build"
   },
   "app": {
-    "withGlobalTauri": true,
     "windows": [
       {
         "title": "chat-live",
         "width": 800,
-        "height": 600
+        "height": 600,
+        "resizable": true,
+        "fullscreen": false
       }
     ],
     "security": {
