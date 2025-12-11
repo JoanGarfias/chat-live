@@ -3,7 +3,10 @@ import type { Configuration } from '@/types/Configuration';
 
 export const useConfigStore = defineStore('config', {
   state: () => ({
-    config: null as Configuration | null,
+    config: {
+        ip: '192.168.1.1',
+        port: 5000,
+    } as Configuration | null,
   }),
   getters: {
     getConfig: (state) => state.config,
