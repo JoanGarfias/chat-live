@@ -12,6 +12,7 @@ export function useLogin() {
         else if (username.trim().length < 3) {
             return "El nombre de usuario debe tener al menos 3 caracteres.";
         }
+        
         return "Nombre de usuario inválido.";
     }
 
