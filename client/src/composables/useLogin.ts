@@ -1,7 +1,7 @@
 import { useAuthStore } from "@/stores/auth";
-const auth = useAuthStore();
 
 export function useLogin() {
+    const auth = useAuthStore();
   
     const validateUsername = (username: string): null | string => {
         if (username.trim().length >= 3) {
