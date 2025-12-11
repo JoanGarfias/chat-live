@@ -14,24 +14,24 @@ const isConfigOpen = ref<boolean>(false);
     <ConfigPanel v-model:open="isConfigOpen" />
 
     <div class="h-screen bg-linear-to-br from-background via-muted/20 to-background flex flex-col">
-        <!-- Settings -->
-        <div class="p-4 border-b border-border bg-accent/50 flex items-center justify-end">
-            <Button
-                variant="ghost"
-                @click="isConfigOpen = true"
-                class="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition cursor-pointer"
-            >
-                <Settings class="h-5 w-5" />
-                <span>Configuración</span>
-            </Button>
-        </div>
-
         <!-- Chat Container -->
         <div class="flex-1 flex flex-col bg-card overflow-hidden">
             <!-- Chat Header -->
             <div class="bg-accent/50 border-b border-border p-4 flex items-center justify-between">
                 <h2 class="text-xl font-semibold text-foreground">Chat Live</h2>
-                <span class="text-sm text-muted-foreground">Conectado</span>
+                <div class="flex flex-row items-center gap-4">
+                    <!-- Settings -->
+                    <div class="p-4 items-center">
+                        <Button
+                            variant="ghost"
+                            @click="isConfigOpen = true"
+                            class="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition cursor-pointer"
+                        >
+                            <Settings class="h-5 w-5" />
+                        </Button>
+                    </div>
+                    <span class="bg-emerald-500 rounded-full w-3 h-3"></span>
+                </div>
             </div>
 
             <!-- Chat Messages -->
