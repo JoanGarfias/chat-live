@@ -1,2 +1,3 @@
 *.html linguist-language=Ignore
 *.css linguist-language=Ignore
+client/src/components/ui/*.vue linguist-vendored
