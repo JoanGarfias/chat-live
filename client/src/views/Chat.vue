@@ -20,17 +20,16 @@ const isConfigOpen = ref<boolean>(false);
             <div class="bg-accent/50 border-b border-border p-4 flex items-center justify-between">
                 <h2 class="text-xl font-semibold text-foreground">Chat Live</h2>
                 <div class="flex flex-row items-center gap-4">
+                    <span class="bg-emerald-500 rounded-full w-3 h-3"></span>
                     <!-- Settings -->
-                    <div class="p-4 items-center">
+                    <div class="items-center">
                         <Button
-                            variant="ghost"
-                            @click="isConfigOpen = true"
-                            class="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition cursor-pointer"
-                        >
+                        variant="ghost"
+                        @click="isConfigOpen = true"
+                        class="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition cursor-pointer">
                             <Settings class="h-5 w-5" />
                         </Button>
                     </div>
-                    <span class="bg-emerald-500 rounded-full w-3 h-3"></span>
                 </div>
             </div>
 
