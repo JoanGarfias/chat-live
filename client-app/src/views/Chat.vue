@@ -3,11 +3,12 @@
 import { computed, onMounted, ref } from 'vue';
 
 //composables and types
-import { useChat } from '@/composables/useChat';
+import { useChatStore } from '@/stores/chat';
 import { Message } from '@/types/Message';
 import { useSocket } from "@/composables/useSocket";
 
-const { msgServer, send, connect } = useSocket();
+const { send, connect } = useSocket();
+const chatStore = useChatStore();
 
 //components and icons
 import ChatActions from '@/components/chat/ChatActions.vue';
@@ -15,11 +16,13 @@ import ConfigPanel from '@/components/config/ConfigPanel.vue';
 import { CircleUserRound, Settings } from 'lucide-vue-next';
 import Button from '@/components/ui/button/Button.vue';
 
-const { getState, getName, addMessage, messages } = useChat();
+
+const messages = computed(() => chatStore.messages);
 const isConfigOpen = ref<boolean>(false);
 
 const stateClass = computed(() => {
-    switch (getState()) {
+    console.log('Estado del socket:', chatStore.getState);
+    switch (chatStore.getState) {
         case 'connected':
             return 'bg-emerald-500';
         case 'connecting':
@@ -32,7 +35,7 @@ const stateClass = computed(() => {
 });
 
 const receiveMessage = (msg: Message) => {
-    addMessage(msg);
+    chatStore.addMessage(msg);
     send(JSON.stringify(msg));
 }
 
@@ -56,7 +59,7 @@ onMounted(async () => {
                     <!--<h2 class="text-xl font-semibold text-foreground">Chat Live</h2> -->
                     <div class="flex flex-row gap-2 items-center">
                         <CircleUserRound class="h-6 w-6 text-muted-foreground" />
-                        <p class="text-md text-muted-foreground">{{ getName() }}</p>
+                        <p class="text-md text-muted-foreground">{{ chatStore.getName }}</p>
                     </div>
                 </div>
                 <div class="flex flex-row items-center gap-4">
@@ -76,7 +79,7 @@ onMounted(async () => {
             <!-- Chat Messages -->
             <div class="flex-1 p-4 overflow-y-auto space-y-4">
                 <!-- Aquí irán los mensajes del chat -->
-                <div v-for="(msg, index) in messages" :key="index" class="p-3 rounded-md" :class="msg.autor === getName() ? 'bg-blue-100 self-end' : 'bg-gray-100 self-start'">
+                <div v-for="(msg, index) in messages" :key="index" class="p-3 rounded-md" :class="msg.autor === chatStore.getName ? 'bg-blue-100 self-end' : 'bg-gray-100 self-start'">
                     <p class="font-semibold text-sm mb-1">{{ msg.autor }}</p>
                     <p class="text-md">{{ msg.mensaje }}</p>
                 </div>

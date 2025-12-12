@@ -1,13 +1,24 @@
-import { ref } from "vue";
+//vue utils
+import { computed, ref } from "vue";
 import { invoke } from "@tauri-apps/api/core";
-import { listen } from "@tauri-apps/api/event";
+
+//pinia stores
 import { useConfigStore } from "@/stores/config";
-import { Configuration } from "@/types/Configuration";
+import { useChatStore } from "@/stores/chat";
+
+//tauri utils
+import { listen } from "@tauri-apps/api/event";
+
+//types
+import type { Configuration } from "@/types/Configuration";
+import type { Message } from "@/types/Message";
 
 export function useSocket() {
   const isConnected = ref(false);
   const msgServer = ref<string[]>([]);
   const serverConfig = ref<Configuration | null>(null);
+
+  const chatStore = useChatStore();
 
   const connect = async () => {
     const configStore = useConfigStore();
@@ -36,6 +47,14 @@ export function useSocket() {
       listen("socket_message", (event : any) => {
         msgServer.value.push(event.payload);
         console.log("Mensaje del servidor:", event.payload);
+
+                //Conectando mensaje con el chat UI
+        const msgPayload = event.payload;
+        const message: Message = {
+          autor: "Usuario",
+          mensaje: msgPayload,
+        };
+        chatStore.addMessage(message);
       });
 
     } catch (error) {

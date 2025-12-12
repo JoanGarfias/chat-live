@@ -18,6 +18,7 @@ export function useChat(){
 
     const addMessage = (msg: Message) => {
         messages.value.push(msg);
+        console.log("Mensaje añadido al chat:", msg);
     }
 
     const clearChat = () => {
