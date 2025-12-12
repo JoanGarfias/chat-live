@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Configuration } from '@/types/Configuration'
-import {  useConfigStore } from '@/stores/config'
+import type { Configuration } from '@/types/Configuration';
+import {  useConfigStore } from '@/stores/config';
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -11,24 +11,24 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { ref, onMounted } from 'vue'
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { ref, onMounted } from 'vue';
 
-const configStore = useConfigStore()
+const configStore = useConfigStore();
 
 const props = defineProps<{
   open: boolean
-}>()
+}>();
 
 const emit = defineEmits<{
   'update:open': [value: boolean],
   'config-saved': []
-}>()
+}>();
 
 const handleOpenChange = (value: boolean) => {
-  emit('update:open', value)
+  emit('update:open', value);
 }
 
 // Inicializar con los valores del store (por defecto o guardados)
@@ -39,13 +39,13 @@ const config = ref<Configuration>({
 
 // Cargar configuración guardada al montar el componente
 onMounted(() => {
-  const savedConfig = configStore.loadConfig()
+  const savedConfig = configStore.loadConfig();
   if (savedConfig) {
-    config.value.ip = savedConfig.ip
-    config.value.port = savedConfig.port
+    config.value.ip = savedConfig.ip;
+    config.value.port = savedConfig.port;
   } else if (configStore.config) {
-    config.value.ip = configStore.config.ip
-    config.value.port = configStore.config.port
+    config.value.ip = configStore.config.ip;
+    config.value.port = configStore.config.port;
   }
 });
 
@@ -53,7 +53,7 @@ const loading = ref<boolean>(false);
 const errors = ref<string | null>(null);
 
 const handleSubmit = (event: Event) => {
-    event.preventDefault()
+    event.preventDefault();
     loading.value = true
     if(config.value.ip.trim() === '' || config.value.port <= 0) {
         errors.value = 'Por favor, ingresa una IP y un puerto válidos.';

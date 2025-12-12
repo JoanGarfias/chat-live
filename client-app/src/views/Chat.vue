@@ -14,11 +14,19 @@ const chatStore = useChatStore();
 import ChatActions from '@/components/chat/ChatActions.vue';
 import ConfigPanel from '@/components/config/ConfigPanel.vue';
 import { CircleUserRound, Settings } from 'lucide-vue-next';
-import Button from '@/components/ui/button/Button.vue';
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import ClearChatModal from '@/components/config/ClearChatModal.vue';
 
 const messages = computed(() => chatStore.messages);
 const isConfigOpen = ref<boolean>(false);
+const isClearChatModalOpen = ref<boolean>(false);
 
 const stateClass = computed(() => {
     console.log('Estado del socket:', chatStore.getState);
@@ -49,6 +57,7 @@ onMounted(async () => {
 
 <template>
     <ConfigPanel v-model:open="isConfigOpen" />
+    <ClearChatModal v-model:open="isClearChatModalOpen" />
 
     <div class="h-screen bg-linear-to-br from-background via-muted/20 to-background flex flex-col">
         <!-- Chat Container -->
@@ -66,12 +75,24 @@ onMounted(async () => {
                     <span :class="stateClass" class="rounded-full w-3 h-3"></span>
                     <!-- Settings -->
                     <div class="items-center">
-                        <Button
-                        variant="ghost"
-                        @click="isConfigOpen = true"
-                        class="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition cursor-pointer">
-                            <Settings class="h-5 w-5" />
-                        </Button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger>
+                                <Settings class="h-5 w-5 text-muted-foreground" />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+
+                                <DropdownMenuLabel>Ajustes</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+
+                                <DropdownMenuItem>
+                                    <span @click="isConfigOpen = true">IP/puerto</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>
+                                    <span @click="isClearChatModalOpen = true">Limpiar chat</span>
+                                </DropdownMenuItem>
+
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 </div>
             </div>
