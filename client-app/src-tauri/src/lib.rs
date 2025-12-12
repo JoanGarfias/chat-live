@@ -2,9 +2,12 @@
 mod commands;
 
 use std::sync::{Arc, Mutex};
+use std::net::TcpStream;
 
-// Estado temporal del socket (sin implementación de SocketClient por ahora)
-pub struct SocketState(pub Arc<Mutex<Option<String>>>);
+// Estado del socket con TcpStream
+pub struct SocketState {
+    pub stream: Option<Arc<Mutex<TcpStream>>>,
+}
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -15,7 +18,7 @@ fn greet(name: &str) -> String {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .manage(SocketState(Arc::new(Mutex::new(None))))
+        .manage(Mutex::new(SocketState { stream: None }))
         .invoke_handler(tauri::generate_handler![
             greet,
             commands::connect_socket::connect_socket,

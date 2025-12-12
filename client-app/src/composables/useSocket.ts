@@ -19,8 +19,10 @@ export function useSocket() {
 
     try {
       await invoke("connect_socket", { 
-        ip: config.ip, 
-        port: config.port 
+        serverInfo: {
+          ip: config.ip, 
+          port: config.port
+        }
       });
       // Guardar la configuración usada para la conexión
       serverConfig.value = { ip: config.ip, port: config.port };
@@ -30,6 +32,12 @@ export function useSocket() {
         msgServer.value.push(event.payload);
         console.log("Mensaje del servidor:", event.payload);
       });
+
+      listen("socket_message", (event : any) => {
+        msgServer.value.push(event.payload);
+        console.log("Mensaje del servidor:", event.payload);
+      });
+
     } catch (error) {
       console.error("Error al conectar:", error);
       isConnected.value = false;
@@ -38,7 +46,7 @@ export function useSocket() {
 
   const send = async (msg: string) => {
     try {
-      await invoke("send_message", { message: msg });
+      await invoke("send_message", { msg: msg });
       console.log("Mensaje enviado:", msg);
     } catch (error) {
       console.error("Error al enviar mensaje:", error);
