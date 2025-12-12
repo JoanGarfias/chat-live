@@ -19,7 +19,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             greet,
             commands::connect_socket::connect_socket,
-            commands::send_message::send_message
+            commands::send_message::send_message,
+            commands::disconnect_socket::disconnect_socket
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
