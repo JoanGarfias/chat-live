@@ -1,11 +1,21 @@
 import socket
 import threading
+import json
 
-IP = "172.30.144.1"
+IP = "192.168.8.188"
 PORT = 5000
 
 cliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 cliente.connect((IP, PORT))
+
+autor = input("Ingresa tu nombre de usuario: ")
+
+print("")
+
+mensajeData = {
+    "autor": autor,
+    "mensaje": "",
+}
 
 def recibir():
     while True:
@@ -29,6 +39,7 @@ while True:
     mensaje = input("")
     if( mensaje.lower() == "salir" ):
         break
-    cliente.send(mensaje.encode())
+    mensajeData["mensaje"] = mensaje
+    cliente.send(json.dumps(mensajeData).encode())
 cliente.close()
 print("Desconectado del servidor.")
