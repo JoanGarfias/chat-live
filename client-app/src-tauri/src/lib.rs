@@ -1,13 +1,9 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 mod commands;
+mod state;
 
-use std::sync::{Arc, Mutex};
-use std::net::TcpStream;
-
-// Estado del socket con TcpStream
-pub struct SocketState {
-    pub stream: Option<Arc<Mutex<TcpStream>>>,
-}
+use std::sync::Mutex;
+use state::SocketState;
 
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -18,7 +14,7 @@ fn greet(name: &str) -> String {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .manage(Mutex::new(SocketState { stream: None }))
+        .manage(Mutex::new(SocketState::new()))
         .invoke_handler(tauri::generate_handler![
             greet,
             commands::connect_socket::connect_socket,
