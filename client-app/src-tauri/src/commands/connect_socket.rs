@@ -1,6 +1,6 @@
 use std::net::TcpStream;
 use std::sync::{Arc, Mutex};
-use std::io::{Read};
+use std::io::{Read, Write};
 use tauri::{AppHandle, Emitter};
 use serde::Deserialize;
 
@@ -12,13 +12,22 @@ pub struct ServerInfo {
     pub port: u16,
 }
 
+#[derive(Deserialize, Clone, serde::Serialize)]
+pub struct Message {
+    pub autor: String,
+    pub mensaje: String,
+}
+
+
 #[tauri::command]
 pub fn connect_socket(app: AppHandle, state: tauri::State<Mutex<SocketState>>, server_info: ServerInfo) -> Result<String, String> {
     let address = format!("{}:{}", server_info.ip, server_info.port);
     
     // Crear stream para lectura (no bloqueante)
     let read_stream = match TcpStream::connect(&address) {
-        Ok(stream) => {
+        Ok(mut stream) => {
+            // Enviar identificador de tipo de conexión
+            stream.write_all(b"{\"type\":\"read\"}").ok();
             stream.set_nonblocking(true).unwrap();
             Arc::new(Mutex::new(stream))
         },
@@ -27,7 +36,9 @@ pub fn connect_socket(app: AppHandle, state: tauri::State<Mutex<SocketState>>, s
     
     // Crear stream para escritura (bloqueante)
     let write_stream = match TcpStream::connect(&address) {
-        Ok(stream) => {
+        Ok(mut stream) => {
+            // Enviar identificador de tipo de conexión
+            stream.write_all(b"{\"type\":\"write\"}").ok();
             // Mantener bloqueante por defecto
             Arc::new(Mutex::new(stream))
         },
@@ -51,7 +62,18 @@ pub fn connect_socket(app: AppHandle, state: tauri::State<Mutex<SocketState>>, s
 
             match stream_lock.read(&mut buffer) {
                 Ok(size) if size > 0 => {
-                    let msg = String::from_utf8_lossy(&buffer[..size]).to_string();
+                    let msg: Message = match serde_json::from_slice(&buffer[..size]) {
+                        Ok(m) => m,
+                        Err(e) => {
+                            eprintln!("Error al deserializar mensaje: {}", e);
+                            continue;
+                        }
+                    };
+
+                    if msg.autor == "" {
+                        // Ignorar mensajes de ping del servidor
+                        continue;
+                    }
 
                     // Enviar evento al frontend
                     app_clone.emit("socket_message", msg).ok();
