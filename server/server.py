@@ -7,7 +7,8 @@ server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 server.bind((IP, PORT))
 server.listen()
 
-clientes = []
+# Diccionario: {ip: {"read": socket, "write": socket}}
+clientes = {}
 
 print(f"Servidor escuchando en {IP}:{PORT}")
 

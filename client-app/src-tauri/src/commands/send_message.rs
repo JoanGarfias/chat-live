@@ -33,6 +33,9 @@ pub fn send_message(state: State<Mutex<SocketState>>, msg: String) -> Result<Str
                 if let Err(e) = stream.flush() {
                     eprintln!("Error al hacer flush: {}", e);
                 }
+                else{
+                    log::info!("Mensaje enviado: {}", msg);
+                }
             }
             Err(e) => {
                 eprintln!("Error al enviar mensaje: {}", e);

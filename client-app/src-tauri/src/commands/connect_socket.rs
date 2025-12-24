@@ -22,10 +22,11 @@ pub struct Message {
 
 #[tauri::command]
 pub fn connect_socket(app: AppHandle, state: tauri::State<Mutex<SocketState>>, server_info: ServerInfo) -> Result<String, String> {
+    log::info!("Intentando conectar a {}:{}", server_info.ip, server_info.port);
     let address = format!("{}:{}", server_info.ip, server_info.port);
     
-    // Timeout de 5 segundos para las conexiones
-    let timeout = Duration::from_secs(5);
+    // Timeout de 3 segundos para las conexiones
+    let timeout = Duration::from_secs(3);
     
     // Crear stream para lectura (no bloqueante)
     let read_stream = match TcpStream::connect_timeout(
@@ -75,6 +76,8 @@ pub fn connect_socket(app: AppHandle, state: tauri::State<Mutex<SocketState>>, s
         }
     };
 
+    log::info!("Ambos streams conectados exitosamente");
+    
     // Guardar en el estado global
     {
         let mut s = state.lock().unwrap();
@@ -85,35 +88,58 @@ pub fn connect_socket(app: AppHandle, state: tauri::State<Mutex<SocketState>>, s
     // Hilo de escucha (usa el stream no bloqueante)
     let app_clone = app.clone();
     std::thread::spawn(move || {
+        log::info!("Hilo de escucha iniciado");
         let mut buffer = [0; 1024];
 
         loop {
             let mut stream_lock = read_stream.lock().unwrap();
 
             match stream_lock.read(&mut buffer) {
-                Ok(size) if size > 0 => {
+                Ok(0) => {
+                    log::warn!("Conexión cerrada por el servidor");
+                    break;
+                },
+                Ok(size) => {
+                    log::info!("Datos recibidos: {} bytes", size);
+                    
+                    // Mostrar datos en bruto como String para depuración
+                    if let Ok(raw_str) = String::from_utf8(buffer[..size].to_vec()) {
+                        log::info!("Contenido bruto: {}", raw_str);
+                    }
+                    
                     let msg: Message = match serde_json::from_slice(&buffer[..size]) {
                         Ok(m) => m,
                         Err(e) => {
-                            eprintln!("Error al deserializar mensaje: {}", e);
+                            log::error!("Error al deserializar mensaje: {}", e);
                             continue;
                         }
                     };
 
                     if msg.autor == "" {
-                        // Ignorar mensajes de ping del servidor
+                        log::debug!("Ignorando mensaje de ping del servidor");
                         continue;
                     }
 
+                    log::info!("Mensaje procesado - Autor: {}, Mensaje: {}", msg.autor, msg.mensaje);
                     // Enviar evento al frontend
-                    app_clone.emit("socket_message", msg).ok();
+                    if let Err(e) = app_clone.emit("socket_message", msg) {
+                        log::error!("Error al emitir evento al frontend: {:?}", e);
+                    } else {
+                        log::info!("Evento emitido correctamente al frontend");
+                    }
                 },
-                _ => {
-                    // Evita bloquear al 100% la CPU
+                Err(ref e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                    // No hay datos disponibles, seguir esperando
+                    drop(stream_lock); // Liberar el lock antes de dormir
                     std::thread::sleep(std::time::Duration::from_millis(50));
+                },
+                Err(e) => {
+                    log::error!("Error al leer del stream: {}", e);
+                    break;
                 }
             }
         }
+        log::warn!("Hilo de escucha finalizado");
     });
 
     Ok("Conectado al servidor Python".into())
