@@ -5,6 +5,7 @@ import type { Message } from "@/types/Message";
 export const useChatStore = defineStore('chat', {
   state: () => ({
     messages: [] as Message[],
+    chatCleaned: false,
   }),
   
   getters: {
@@ -22,6 +23,7 @@ export const useChatStore = defineStore('chat', {
     
     clearChat() {
       this.messages = [];
+      this.chatCleaned = true;
     }
   }
 });

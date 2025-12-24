@@ -39,7 +39,7 @@ export function useSocket() {
       serverConfig.value = { ip: config.ip, port: config.port };
       isConnected.value = true;
 
-      await listen<string>("server-message", (event) => {
+      await listen<string>("socket_message", (event) => {
         msgServer.value.push(event.payload);
         console.log("Mensaje del servidor:", event.payload);
       });
