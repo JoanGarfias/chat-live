@@ -1,0 +1,5 @@
+# python cache files
+*.pyc
+server/core/__pycache__/*
+server/modules/__pycache__/*
+server/handlers/__pycache__/*
