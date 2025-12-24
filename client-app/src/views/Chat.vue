@@ -84,11 +84,11 @@ onMounted(async () => {
                                 <DropdownMenuLabel>Ajustes</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
 
-                                <DropdownMenuItem>
-                                    <span @click="isConfigOpen = true">IP/puerto</span>
+                                <DropdownMenuItem @click="isConfigOpen = true">
+                                    <span>IP/puerto</span>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <span @click="isClearChatModalOpen = true">Limpiar chat</span>
+                                <DropdownMenuItem @click="isClearChatModalOpen = true">
+                                    <span>Limpiar chat</span>
                                 </DropdownMenuItem>
 
                             </DropdownMenuContent>

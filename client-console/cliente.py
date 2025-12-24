@@ -2,7 +2,7 @@ import socket
 import threading
 import json
 
-IP = "192.168.100.56"
+IP = "192.168.0.9"
 PORT = 5000
 
 cliente = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
