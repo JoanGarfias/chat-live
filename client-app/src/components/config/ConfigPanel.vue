@@ -15,8 +15,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ref, onMounted } from 'vue';
+import { useSocket } from '@/composables/useSocket';
 
 const configStore = useConfigStore();
+const { connect } = useSocket();
 
 const props = defineProps<{
   open: boolean
@@ -62,8 +64,10 @@ const handleSubmit = (event: Event) => {
     }
     errors.value = null;
 
-    configStore.setConfig(config.value)
+    configStore.setConfig(config.value);
     emit('config-saved');
+    connect();
+    console.log("Configuración guardada:", config.value);
     setTimeout(() => {
         handleOpenChange(false);
         loading.value = false;

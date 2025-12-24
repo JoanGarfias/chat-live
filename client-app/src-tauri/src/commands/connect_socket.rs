@@ -1,6 +1,7 @@
 use std::net::TcpStream;
 use std::sync::{Arc, Mutex};
 use std::io::{Read, Write};
+use std::time::Duration;
 use tauri::{AppHandle, Emitter};
 use serde::Deserialize;
 
@@ -23,26 +24,55 @@ pub struct Message {
 pub fn connect_socket(app: AppHandle, state: tauri::State<Mutex<SocketState>>, server_info: ServerInfo) -> Result<String, String> {
     let address = format!("{}:{}", server_info.ip, server_info.port);
     
+    // Timeout de 5 segundos para las conexiones
+    let timeout = Duration::from_secs(5);
+    
     // Crear stream para lectura (no bloqueante)
-    let read_stream = match TcpStream::connect(&address) {
+    let read_stream = match TcpStream::connect_timeout(
+        &address.parse().map_err(|e| format!("Dirección inválida: {}", e))?,
+        timeout
+    ) {
         Ok(mut stream) => {
+            // Configurar timeouts de lectura/escritura
+            stream.set_read_timeout(Some(timeout))
+                .map_err(|e| format!("Error configurando timeout de lectura: {}", e))?;
+            stream.set_write_timeout(Some(timeout))
+                .map_err(|e| format!("Error configurando timeout de escritura: {}", e))?;
+            
             // Enviar identificador de tipo de conexión
-            stream.write_all(b"{\"type\":\"read\"}").ok();
-            stream.set_nonblocking(true).unwrap();
+            stream.write_all(b"{\"type\":\"read\"}")
+                .map_err(|e| format!("Error enviando identificador de lectura: {}", e))?;
+            
+            stream.set_nonblocking(true)
+                .map_err(|e| format!("Error configurando modo no bloqueante: {}", e))?;
+            
             Arc::new(Mutex::new(stream))
         },
         Err(e) => return Err(format!("Error al conectar stream de lectura: {}", e))
     };
     
     // Crear stream para escritura (bloqueante)
-    let write_stream = match TcpStream::connect(&address) {
+    let write_stream = match TcpStream::connect_timeout(
+        &address.parse().map_err(|e| format!("Dirección inválida: {}", e))?,
+        timeout
+    ) {
         Ok(mut stream) => {
+            // Configurar timeouts de lectura/escritura
+            stream.set_read_timeout(Some(timeout))
+                .map_err(|e| format!("Error configurando timeout de lectura: {}", e))?;
+            stream.set_write_timeout(Some(timeout))
+                .map_err(|e| format!("Error configurando timeout de escritura: {}", e))?;
+            
             // Enviar identificador de tipo de conexión
-            stream.write_all(b"{\"type\":\"write\"}").ok();
-            // Mantener bloqueante por defecto
+            stream.write_all(b"{\"type\":\"write\"}")
+                .map_err(|e| format!("Error enviando identificador de escritura: {}", e))?;
+            
             Arc::new(Mutex::new(stream))
         },
-        Err(e) => return Err(format!("Error al conectar stream de escritura: {}", e))
+        Err(e) => {
+            // Si falla la segunda conexión, no guardamos nada en el estado
+            return Err(format!("Error al conectar stream de escritura: {}", e));
+        }
     };
 
     // Guardar en el estado global
