@@ -1,11 +1,16 @@
 <script setup lang="ts">
+//vue utils
+import { ref } from 'vue';
+
+//components and icons
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Message } from '@/types/Message';
 import { Send } from 'lucide-vue-next';
-import { ref } from 'vue';
-import { useChat } from '@/composables/useChat';
 
+
+// composables
+import { useChat } from '@/composables/useChat';
 const { getName } = useChat();
 
 const messageToSend = ref<Message>({

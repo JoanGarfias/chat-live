@@ -6,6 +6,9 @@ import { invoke } from "@tauri-apps/api/core";
 import { useConfigStore } from "@/stores/config";
 import { useChatStore } from "@/stores/chat";
 
+//composables
+import { useSound } from "@/composables/useSound";
+
 //tauri utils
 import { listen } from "@tauri-apps/api/event";
 
@@ -18,6 +21,9 @@ export function useSocket() {
   const msgServer = ref<string[]>([]);
   const serverConfig = ref<Configuration | null>(null);
 
+  //notification sound
+  const { playReceiveSound } = useSound();
+  //chat historial
   const chatStore = useChatStore();
 
   const connect = async () => {
@@ -48,13 +54,14 @@ export function useSocket() {
         msgServer.value.push(event.payload);
         console.log("Mensaje del servidor:", event.payload);
 
-                //Conectando mensaje con el chat UI
+        //Conectando mensaje con el chat UI
         const msgPayload = event.payload;
         const message: Message = {
           autor: msgPayload.autor,
           mensaje: msgPayload.mensaje,
         };
         chatStore.addMessage(message);
+        playReceiveSound();
       });
 
     } catch (error) {
@@ -95,5 +102,11 @@ export function useSocket() {
     });
   };
 
-  return { isConnected, msgServer, send, connect, disconnect };
+  return {
+    isConnected,
+    msgServer,
+    send,
+    connect,
+    disconnect
+  };
 }
