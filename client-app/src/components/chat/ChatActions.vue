@@ -10,6 +10,7 @@ import { Send } from 'lucide-vue-next';
 
 // composables
 import { useChat } from '@/composables/useChat';
+import { text } from 'node:stream/consumers';
 const { getName } = useChat();
 
 
@@ -17,6 +18,8 @@ const messageToSend = ref<Message>({
     autor: '',
     mensaje: ''
 });
+
+const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
 const emit = defineEmits<{
     (e: 'sendMessage', msg: Message): void
@@ -26,6 +29,9 @@ const sendMessage = () => {
     const newMessage : Message = { ...messageToSend.value, autor: getName() };
     emit('sendMessage', newMessage);
     messageToSend.value.mensaje = '';
+    if(textareaRef.value){
+        textareaRef.value.scrollTop = textareaRef.value.scrollHeight;
+    }
 };
 
 </script>
@@ -33,6 +39,7 @@ const sendMessage = () => {
 <template>
     <div class="bg-accent/50 border-t border-border p-4 flex items-center gap-4">
         <Textarea
+            ref="textareaRef"
             placeholder="Escribe tu mensaje..."
             class="flex-1 resize-none h-10 min-h-10 max-h-10 border border-input bg-background rounded-md px-3 overflow-hidden"
             rows="1"

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 //vue utils
-import { computed, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
 //composables and types
 import { useChatStore } from '@/stores/chat';
@@ -27,6 +27,7 @@ import ClearChatModal from '@/components/config/ClearChatModal.vue';
 const messages = computed(() => chatStore.messages);
 const isConfigOpen = ref<boolean>(false);
 const isClearChatModalOpen = ref<boolean>(false);
+const messagesContainer = ref<HTMLElement | null>(null);
 
 const stateClass = computed(() => {
     console.log('Estado del socket:', chatStore.getState);
@@ -47,9 +48,23 @@ const receiveMessage = (msg: Message) => {
     send(JSON.stringify(msg));
 }
 
+const scrollToBottom = () => {
+    nextTick(() => {
+        if (messagesContainer.value) {
+            messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+        }
+    });
+};
+
+// Autoscroll cuando cambian los mensajes
+watch(messages, () => {
+    scrollToBottom();
+}, { deep: true });
+
 onMounted(async () => {
     console.log('Conectando con el socket...');
     await connect();
+    scrollToBottom();
 });
 
 
@@ -98,7 +113,7 @@ onMounted(async () => {
             </div>
 
             <!-- Chat Messages -->
-            <div class="flex-1 p-4 overflow-y-auto space-y-4">
+            <div ref="messagesContainer" class="flex-1 p-4 overflow-y-auto space-y-4">
                 <!-- Aquí irán los mensajes del chat -->
                 <div v-for="(msg, index) in messages" :key="index" class="p-3 rounded-md" :class="msg.autor === chatStore.getName ? 'bg-blue-100 self-end' : 'bg-gray-100 self-start'">
                     <p class="font-semibold text-sm mb-1">{{ msg.autor }}</p>
