@@ -8,10 +8,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Message } from '@/types/Message';
 import { Send } from 'lucide-vue-next';
 
-
 // composables
 import { useChat } from '@/composables/useChat';
 const { getName } = useChat();
+
 
 const messageToSend = ref<Message>({
     autor: '',
@@ -37,6 +37,7 @@ const sendMessage = () => {
             class="flex-1 resize-none h-10 min-h-10 max-h-10 border border-input bg-background rounded-md px-3 overflow-hidden"
             rows="1"
             v-model="messageToSend.mensaje"
+            @keydown.enter.prevent="sendMessage"
         />
         <Button variant="outline" class="rounded-full h-12 w-12 flex items-center justify-center p-0" @click="sendMessage">
             <Send class="h-6 w-6" />
