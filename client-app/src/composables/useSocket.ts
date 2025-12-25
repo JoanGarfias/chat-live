@@ -50,9 +50,10 @@ export function useSocket() {
 
                 //Conectando mensaje con el chat UI
         const msgPayload = event.payload;
+        const msgObj = JSON.parse(msgPayload);
         const message: Message = {
-          autor: "Usuario",
-          mensaje: msgPayload,
+          autor: msgObj.autor,
+          mensaje: msgObj.mensaje,
         };
         chatStore.addMessage(message);
       });
