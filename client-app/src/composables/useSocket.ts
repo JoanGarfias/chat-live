@@ -22,7 +22,7 @@ export function useSocket() {
   const serverConfig = ref<Configuration | null>(null);
 
   //notification sound
-  const { playReceiveSound } = useSound();
+  const { playNotificationSound } = useSound();
   //chat historial
   const chatStore = useChatStore();
 
@@ -61,7 +61,7 @@ export function useSocket() {
           mensaje: msgPayload.mensaje,
         };
         chatStore.addMessage(message);
-        playReceiveSound();
+        playNotificationSound();
       });
 
     } catch (error) {
