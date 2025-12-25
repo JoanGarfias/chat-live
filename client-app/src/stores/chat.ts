@@ -13,7 +13,8 @@ export const useChatStore = defineStore('chat', {
     getName: () => {
       const auth = useAuthStore();
       return auth.user ? auth.user.nombre_usuario : "Invitado";
-    }
+    },
+    isChatCleaned: (state) => state.chatCleaned,
   },
   
   actions: {

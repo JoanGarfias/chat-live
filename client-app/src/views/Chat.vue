@@ -104,7 +104,8 @@ onMounted(async () => {
                     <p class="font-semibold text-sm mb-1">{{ msg.autor }}</p>
                     <p class="text-md">{{ msg.mensaje }}</p>
                 </div>
-                <p v-if="messages.length === 0" class="text-muted-foreground">No hay mensajes aún. Sé el primero en enviar uno.</p>
+                <p v-if="chatStore.isChatCleaned && messages.length === 0" class="text-center text-muted-foreground">El chat ha sido limpiado.</p>
+                <p v-else-if="messages.length === 0" class="text-center text-muted-foreground">No hay mensajes aún. ¡Empieza la conversación!</p>
             </div>
 
             <!-- Chat Actions -->
