@@ -10,7 +10,6 @@ import { Send } from 'lucide-vue-next';
 
 // composables
 import { useChat } from '@/composables/useChat';
-import { text } from 'node:stream/consumers';
 const { getName } = useChat();
 
 

@@ -1,5 +1,5 @@
 //vue utils
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { invoke } from "@tauri-apps/api/core";
 
 //pinia stores
