@@ -35,11 +35,11 @@ export function useSocket() {
     }
 
     try {
-      await invoke("connect_socket", { 
+      await invoke("connect_socket", {
         serverInfo: {
-          ip: config.ip, 
-          port: config.port
-        }
+          ip: config.ip,
+          port: config.port,
+        },
       });
       // Guardar la configuración usada para la conexión
       serverConfig.value = { ip: config.ip, port: config.port };
@@ -50,7 +50,7 @@ export function useSocket() {
         console.log("Mensaje del servidor:", event.payload);
       });
 
-      listen("socket_message", (event : any) => {
+      listen("socket_message", (event: any) => {
         msgServer.value.push(event.payload);
         console.log("Mensaje del servidor:", event.payload);
 
@@ -63,7 +63,6 @@ export function useSocket() {
         chatStore.addMessage(message);
         playNotificationSound();
       });
-
     } catch (error) {
       console.error("Error al conectar:", error);
       isConnected.value = false;
@@ -71,6 +70,10 @@ export function useSocket() {
   };
 
   const send = async (msg: string) => {
+    if (msg.trim() == "") {
+      console.log("Mensaje vacío");
+      return;
+    }
     try {
       await invoke("send_message", { msg: msg });
       console.log("Mensaje enviado:", msg);
@@ -87,19 +90,19 @@ export function useSocket() {
       return;
     }
 
-    invoke("disconnect_socket",
-      {
-        ip: serverConfig.value.ip,
-        port: serverConfig.value.port
-      }
-    ).then(() => {
-      console.log("Desconectado correctamente");
-      isConnected.value = false;
-      msgServer.value = [];
-      serverConfig.value = null;
-    }).catch((error) => {
-      console.error("Error al desconectar:", error);
-    });
+    invoke("disconnect_socket", {
+      ip: serverConfig.value.ip,
+      port: serverConfig.value.port,
+    })
+      .then(() => {
+        console.log("Desconectado correctamente");
+        isConnected.value = false;
+        msgServer.value = [];
+        serverConfig.value = null;
+      })
+      .catch((error) => {
+        console.error("Error al desconectar:", error);
+      });
   };
 
   return {
@@ -107,6 +110,6 @@ export function useSocket() {
     msgServer,
     send,
     connect,
-    disconnect
+    disconnect,
   };
 }

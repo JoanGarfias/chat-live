@@ -25,6 +25,12 @@ const emit = defineEmits<{
 }>();
 
 const sendMessage = () => {
+    // Validar que el mensaje no esté vacío
+    if (messageToSend.value.mensaje.trim() === '') {
+        console.log('Mensaje vacío, no se enviará');
+        return;
+    }
+    
     const newMessage : Message = { ...messageToSend.value, autor: getName() };
     emit('sendMessage', newMessage);
     messageToSend.value.mensaje = '';

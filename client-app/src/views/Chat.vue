@@ -45,7 +45,7 @@ const stateClass = computed(() => {
 
 const receiveMessage = (msg: Message) => {
     chatStore.addMessage(msg);
-    send(JSON.stringify(msg));
+    send(msg.mensaje);
 }
 
 const scrollToBottom = () => {
